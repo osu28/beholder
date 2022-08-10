@@ -1,0 +1,86 @@
+input:
+  video_reader_class: video_readers.pyav_video_reader.PyAVVideoReader
+  video_reader_params:
+    source: rtmp://localhost/live/stream
+    #source: ngmot/videos/demo.m4v
+    frame_start: 0
+    frame_stop: 2000
+
+output:
+  output_dir: outputs/test_new_dist
+  output_video: yes
+  output_thumbnails: no
+  output_socket: True
+  # socket_address: 10.118.54.138
+  # socket_address: 192.168.34.111
+  # socket_address: 192.168.34.179
+  output_json: True
+  socket_address: 172.20.10.4
+  socket_port: 8080
+  socket_protocol: TCP
+  # profile_tracker: True
+
+demo:
+  live_demo: yes
+  display_size: [1280, 720]
+  display_rate: 2
+
+detector:
+  use_detector: yes
+  detector_class: cair_detectors.yolox_pytorch_detector.YoloXPytorchDetector
+  detector_params:
+    weights: weights/yoloxs_ngmot_exp4803.pth
+    arch: s
+    n_classes: 5
+    input_width: 640
+    input_height: 640
+    label_map:
+      0: person
+      1: vehicle
+      2: rotor_drone
+      3: fixed-wing_drone
+      4: bird
+
+extractor:
+  use_extractor: yes
+  extractor_class: cair_feature_extractors.torch_reid_extractor.TorchReidExtractor
+  extractor_params:
+    model: resnet34mid
+    weights: weights/resnet34mid_57.0.pth
+    width: 224
+    height: 224
+
+freqs:
+  frame_process_rate: 4
+  track_predict_rate: 1
+  frame_delay: 0.0
+
+sigma:
+  low_detect_thresh: 0.3
+  high_detect_thresh: 0.6
+  match_score_thresh: 0.33
+  min_track_length: 4
+  max_ending_lifetime: 12
+  re_id_thresh: 0.92
+  max_re_id_interval: 150
+
+reidentification:
+  method: tracker.reidentification.HungarianReid
+  params:
+    reid_chances: 120
+    n_dets: 5
+
+# async:
+#   queue_size: 2
+#   resize: [1280, 720]
+#   detect: True
+#   crop: True
+#   extract: True
+
+track_predictor:
+  use_track_predictor: yes
+  track_predictor_class: track_predictors.fast_kf_tracker.FastKFTrackPredictor
+
+track_assignment:
+  criteria: tracker.track_detection_association.triple_criteria
+  method: tracker.track_detection_association.HungarianAssigner

@@ -1,0 +1,8 @@
+Pedestrian 0
+Truck 1
+Car 2
+Misc 3
+Cyclist 4
+Van 5
+Tram 6
+Person_sitting 7

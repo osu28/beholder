@@ -1,0 +1,17 @@
+human.pedestrian.adult Pedestrian
+vehicle.truck Truck
+vehicle.motorcycle Cyclist
+vehicle.car Car
+vehicle.bicycle Cyclist
+vehicle.construction Misc
+vehicle.bus.rigid Tram
+human.pedestrian.construction_worker Pedestrian
+human.pedestrian.child Pedestrian
+vehicle.trailer Car
+vehicle.bus.bendy Tram
+human.pedestrian.police_officer Pedestrian
+human.pedestrian.personal_mobility Pedestrian
+human.pedestrian.stroller Pedestrian
+human.pedestrian.wheelchair Pedestrian
+vehicle.emergency.ambulance Car
+vehicle.emergency.police Car

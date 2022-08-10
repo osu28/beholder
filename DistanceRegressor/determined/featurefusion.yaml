@@ -1,0 +1,37 @@
+name: featurefusion_huberloss_interns_beholder
+description: train a model to regress distances to objects using the feature fusion method on the full NuScenes Dataset
+data:
+  train_data_dir: /irad_mounts/lambda-quad-5-data/beholder/intern_data/nuscenes-full/
+  val_data_dir: /irad_mounts/lambda-quad-5-data/beholder/intern_data/nuscenes-full/
+  make_local: True
+hyperparameters:
+    learning_rate: 0.000001
+    weight_decay: 0.0001
+    global_batch_size: 16
+    lambda_d: 10
+    lambda_k: 0
+    delta: 1.75
+searcher:
+    name: single
+    metric: RMSE
+    smaller_is_better: true
+    max_length:
+        batches: 441650
+checkpoint_storage:
+    host_path: /irad_users/determined
+    save_experiment_best: 1
+    save_trial_best: 0
+    save_trial_latest: 1
+    storage_path: checkpoints
+    type: shared_fs
+resources:
+    max_slots: 1
+    resource_pool: AMP_48G
+    slots_per_trial: 1
+environment:
+    image: lambda-controller.udev.six3/determinedai/environments:beholder
+entrypoint: model_def_featurefusion:FeatureFusionTrial
+min_validation_period:
+    batches: 8833
+min_checkpoint_period:
+    batches: 8833

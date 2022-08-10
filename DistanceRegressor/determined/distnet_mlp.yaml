@@ -1,0 +1,98 @@
+name: mlp_full_interns_beholder
+description: train a model to regress distances to objects using a mlp on the full NuScenes Dataset. Mapped to KITTI classes
+environment:
+  add_capabilities: []
+  drop_capabilities: []
+  environment_variables:
+    cpu:
+      - MLFLOW_TRACKING_URI=http://lambda-controller.udev.six3/mlflow
+      - GIRDER_URL=http://lambda-controller.udev.six3/girder/api/v1
+    cuda:
+      - MLFLOW_TRACKING_URI=http://lambda-controller.udev.six3/mlflow
+      - GIRDER_URL=http://lambda-controller.udev.six3/girder/api/v1
+    rocm:
+      - MLFLOW_TRACKING_URI=http://lambda-controller.udev.six3/mlflow
+      - GIRDER_URL=http://lambda-controller.udev.six3/girder/api/v1
+  force_pull_image: false
+  image:
+    cpu: lambda-controller.udev.six3/determinedai/environments:beholder
+    cuda: lambda-controller.udev.six3/determinedai/environments:beholder
+    rocm: lambda-controller.udev.six3/determinedai/environments:beholder
+  pod_spec: null
+  ports: {}
+  slurm: []
+bind_mounts:
+  - container_path: /irad_share/
+    host_path: /irad_share/
+    propagation: rprivate
+    read_only: false
+  - container_path: /uncurated_data/
+    host_path: /uncurated_data/
+    propagation: rprivate
+    read_only: false
+  - container_path: /mlruns/
+    host_path: /mlruns/
+    propagation: rprivate
+    read_only: false
+  - container_path: /irad_mounts/
+    host_path: /irad_mounts/
+    propagation: rprivate
+    read_only: false
+  - container_path: /irad_users/
+    host_path: /irad_users/
+    propagation: rprivate
+    read_only: false
+  - container_path: /tmp_host/
+    host_path: /tmp/
+    propagation: rprivate
+    read_only: false
+  - container_path: /data/
+    host_path: /data/
+    propagation: rprivate
+    read_only: false
+checkpoint_policy: best
+checkpoint_storage:
+  host_path: /irad_users/determined
+  propagation: rprivate
+  save_experiment_best: 1
+  save_trial_best: 0
+  save_trial_latest: 1
+  storage_path: checkpoints
+  type: shared_fs
+data:
+  make_local: true
+  train_data_dir: /irad_mounts/lambda-quad-5-data/beholder/intern_data/
+  val_data_dir: /irad_mounts/lambda-quad-5-data/beholder/intern_data/
+data_layer:
+  container_storage_path: null
+  host_storage_path: null
+  type: shared_fs
+debug: false
+
+hyperparameters:
+  learning_rate:
+    type: double
+    minval: 0.00001
+    maxval: 0.001
+  weight_decay: 0.000001
+  global_batch_size: 16
+  momentum: 0.9
+  delta: 1.67
+
+searcher:
+  name: "adaptive_asha"
+  metric: RMSE
+  smaller_is_better: true
+  max_trials: 4
+  max_length:
+    batches: 44165
+  max_concurrent_trials: 4
+resources:
+  max_slots: 2
+  resource_pool: GPU_48G
+  slots_per_trial: 1
+min_validation_period:
+  batches: 2000
+min_checkpoint_period:
+  batches: 2000
+entrypoint: model_def_mlp:DistNetTrial
